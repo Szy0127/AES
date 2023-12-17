@@ -7,6 +7,37 @@
  */
 #include "aes.h"
 #include "gmult.h"
+#include <stdio.h>
+#include <assert.h>
+#define N 16  //128 / 8
+
+void aes_cipher_long(char *in, char *out, uint8_t *w, uint32_t size) {
+    uint32_t up =  (size + N - 1) / N * N;
+    uint32_t pad = up - size;
+    printf("%d %d\n",up ,size);
+    in = realloc(in, up);
+    out = realloc(out, up);
+    
+    //zero pad
+    for(int i = 0 ; i < pad ; i++) {
+        in[size + i] = '0';
+    }
+
+    //ECB
+    for(int i = 0 ; i < up / N ;i++) {
+        aes_cipher((uint8_t*)(in + i * N), (uint8_t*)(out + i * N), w);
+    }
+
+}
+
+void aes_inv_cipher_long(char *in, char *out, uint8_t *w, uint32_t size) {
+    assert(size % N == 0);
+    //ECB
+    for(int i = 0 ; i < size / N ;i++) {
+        aes_inv_cipher((uint8_t*)(in + i * N), (uint8_t*)(out + i * N), w);
+    }
+
+}
 
 /*
  * Addition in GF(2^8)

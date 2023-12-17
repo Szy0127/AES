@@ -6,7 +6,7 @@
  * Based on the document FIPS PUB 197
  */
 #include <stdio.h>
-
+#include <string.h>
 #include "aes.h"
 
 int main() {
@@ -90,37 +90,43 @@ int main() {
 		0xcc, 0xdd, 0xee, 0xff};
 	
 	uint8_t out[16]; // 128
+    char *message = malloc(70);
+    char testMessage[] = "hello world! 1234567 --ipads---------   uefi  project 20231217 abcabc";
+    const int N = 128;
+    
+
+    char *ciphertext = malloc(N);
+    char *plaintext = malloc(N);
+
 
 	uint8_t *w; // expanded key
+    memset(message, 0 ,70);
+    memset(ciphertext, 0, N);
+    memset(plaintext, 0, N);
 
 	w = aes_init(sizeof(key));
 
 	aes_key_expansion(key, w);
 
+
 	printf("Plaintext message:\n");
-	for (i = 0; i < 4; i++) {
-		printf("%02x %02x %02x %02x ", in[4*i+0], in[4*i+1], in[4*i+2], in[4*i+3]);
-	}
+    strncpy(message, testMessage, strlen(testMessage));
+    printf("%s\n", message);
 
-	printf("\n");
 
-	aes_cipher(in /* in */, out /* out */, w /* expanded key */);
+    aes_cipher_long(message, ciphertext, w, strlen(message));
 
 	printf("Ciphered message:\n");
-	for (i = 0; i < 4; i++) {
-		printf("%02x %02x %02x %02x ", out[4*i+0], out[4*i+1], out[4*i+2], out[4*i+3]);
-	}
+    printf("%s\n", ciphertext);
 
-	printf("\n");
 
-	aes_inv_cipher(out, in, w);
+
+    //knows the length of ciphertext in advance
+    aes_inv_cipher_long(ciphertext, plaintext, w, N);
 
 	printf("Original message (after inv cipher):\n");
-	for (i = 0; i < 4; i++) {
-		printf("%02x %02x %02x %02x ", in[4*i+0], in[4*i+1], in[4*i+2], in[4*i+3]);
-	}
+    printf("%s\n", plaintext);
 
-	printf("\n");
 
 	free(w);
 
