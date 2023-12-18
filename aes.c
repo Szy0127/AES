@@ -11,30 +11,31 @@
 #include <assert.h>
 #define N 16  //128 / 8
 
-void aes_cipher_long(char *in, char *out, uint8_t *w, uint32_t size) {
+//caller ensure enough space for pad
+void aes_cipher_long(uint8_t *message, uint8_t *ciphertext, uint8_t *w, uint32_t size) {
     uint32_t up =  (size + N - 1) / N * N;
     uint32_t pad = up - size;
-    printf("%d %d\n",up ,size);
-    in = realloc(in, up);
-    out = realloc(out, up);
+    /*printf("%d %d\n",up ,size);*/
+    /*in = realloc(in, up);*/
+    /*out = realloc(out, up);*/
     
     //zero pad
     for(int i = 0 ; i < pad ; i++) {
-        in[size + i] = '0';
+        message[size + i] = '0';
     }
 
     //ECB
     for(int i = 0 ; i < up / N ;i++) {
-        aes_cipher((uint8_t*)(in + i * N), (uint8_t*)(out + i * N), w);
+        aes_cipher(message + i * N, ciphertext + i * N, w);
     }
 
 }
 
-void aes_inv_cipher_long(char *in, char *out, uint8_t *w, uint32_t size) {
+void aes_inv_cipher_long(uint8_t *ciphertext, uint8_t *plaintext, uint8_t *w, uint32_t size) {
     assert(size % N == 0);
     //ECB
     for(int i = 0 ; i < size / N ;i++) {
-        aes_inv_cipher((uint8_t*)(in + i * N), (uint8_t*)(out + i * N), w);
+        aes_inv_cipher(ciphertext + i * N, plaintext + i * N, w);
     }
 
 }

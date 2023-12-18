@@ -26,6 +26,6 @@ void aes_inv_cipher(uint8_t *in, uint8_t *out, uint8_t *w);
 
 void aes_cipher(uint8_t *in, uint8_t *out, uint8_t *w);
 
-void aes_cipher_long(char *in, char *out, uint8_t *w, uint32_t size);
+void aes_cipher_long(uint8_t *message, uint8_t *ciphertext, uint8_t *w, uint32_t size);
 
-void aes_inv_cipher_long(char *in, char *out, uint8_t *w, uint32_t size);
+void aes_inv_cipher_long(uint8_t *ciphertext, uint8_t *plaintext, uint8_t *w, uint32_t size);
